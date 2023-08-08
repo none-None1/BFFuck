@@ -1,0 +1,4 @@
+x=in
+y=in
+add(x,y)
+out(x)
