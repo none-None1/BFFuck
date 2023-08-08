@@ -1,0 +1,2 @@
+# BFFuck
+ Makes brainfucking easier
