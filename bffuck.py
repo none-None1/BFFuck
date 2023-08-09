@@ -230,7 +230,7 @@ class BFFuck(object):
         clean=''
         for i in prog.split('\n'):
             if i.strip().startswith('print('):
-                clean=i.strip()
+                clean=i.strip() # Print needs to preserve whitespaces
             else:
                 clean=self.join_semantically(i.split()).split('#')[0]
             self.program(clean)

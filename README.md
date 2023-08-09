@@ -84,4 +84,4 @@ BFFuck currently has these disadvantages:
 2. It has some bugs.
 
 
-The repository contains some examples, including a cat program and an A+B program.
+The repository contains some examples, including a Hello World program, a cat program and an A+B program.
