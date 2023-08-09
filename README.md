@@ -13,9 +13,14 @@ bff=BFFuck()
 bf=bff.compile('Your code')
 ```
 
+Note that if a BFFuck object is created and used, its status will change and therefore cannot compile another program.
 ### Syntax
 BFFuck currently supports the following syntax:
 
+Comment:
+```
+# Comment
+```
 Variable definition:
 ```text
 <variable 1>=<variable 2>
@@ -28,6 +33,20 @@ Addition:
 add(x,<number>)
 or
 add(x,<variable>)
+```
+
+Subtraction:
+```
+sub(x,<number>)
+or
+sub(x,<variable>)
+```
+
+Multiplication:
+```
+mul(x,<number>)
+or
+mul(x,<variable>)
 ```
 
 While loop:
@@ -45,6 +64,14 @@ out(<variable or number>) # Outputs <variable> as decimal integer
 outc(<variable or number>) # Outputs <variable> as ASCII character
 ```
 
+String output shortcut:
+```text
+print(STRING) # Without quotes
+# For instance
+print(Hello World!)
+```
+
+
 ### Platform
 BFFuck is in **pure Python** and therefore it supports any platform.
 
@@ -55,6 +82,6 @@ Programs compiled from BFFuck needs you to have 8 bit cells that wrap.
 BFFuck currently has these disadvantages:
 1. It's numbers are 8 bit numbers.
 2. The program it generates is unoptimized.
-3. The program has some of bugs (e.g. You can use "end while" instead of "endwhile", but that shouldn't be allowed).
+
 
 The repository contains some examples, including a cat program and an A+B program.

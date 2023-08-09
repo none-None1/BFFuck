@@ -1,12 +1,13 @@
 class BFFuck(object):
     """Main implemntation of BFFuck, a compiler making brainfucking easier"""
     def __init__(self,playfield=10):
-        """Init object, playfield is the number of bytes used for temporary memory, the lesser the playfield is, the faster the final program is, but setting playfield to a number that is too small causes problems, especially if you want to use integer output."""
+        """Init object, playfield is the number of bytes used for temporary memory, the lesser the playfield is, the faster the final program is, but setting playfield to a number that is too small causes problems, especially if you want to use integer output. (which requires playfield to be >=10"""
         self.valdict={} # Variable address
         self.bf='' # Brainfuck program
         self.ptr=0 # Current pointer
         self.mem=playfield # Leftmost unused memory
         self.stack=[]
+        self.playfield=playfield
         pass
     def movptr(self,pos):
         """Creates brainfuck that moves the pointer to a specific position"""
@@ -92,7 +93,7 @@ class BFFuck(object):
                             self.bf+=self.movptr(self.valdict[vn])
                             self.bf+='.'
                     else:
-                        self.bf+=self.movptr(0)+'+'*int(vn)+'.[-]'
+                        self.bf+=self.movptr(self.playfield-1)+'+'*int(vn)+'.[-]'
             elif code.startswith('out('):
                 if not (code.endswith(')')):
                     raise Exception('Unmatched bracket')
@@ -103,7 +104,7 @@ class BFFuck(object):
                             raise Exception('Variable not found')
                         else:
                             self.bf += self.movptr(self.valdict[vn])
-                            self.bf += '['+self.movptr(0)+'+'+self.movptr(1)+'+'+self.movptr(self.valdict[vn])+'-]'
+                            self.bf += '['+self.movptr(0)+'+'+self.movptr(self.playfield-1)+'+'+self.movptr(self.valdict[vn])+'-]'
                             self.bf+=self.movptr(0)+'>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]' # https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_(8-bit)
                             self.bf+= self.movptr(1)+'['+self.movptr(self.valdict[vn])+'+'+self.movptr(1)+'-'+']'
                     else:
@@ -121,15 +122,116 @@ class BFFuck(object):
                             self.bf+='+'*int(b)
                         else:
                             if b in self.valdict:
-                                self.bf+=self.movptr(self.valdict[b])+'['+self.movptr(self.valdict[a])+'+'+self.movptr(0)+'+'+self.movptr(self.valdict[b])+'-'+']'+self.movptr(0)+'['+self.movptr(self.valdict[b])+'+'+self.movptr(0)+'-'+']'
+                                self.bf+=self.movptr(self.playfield-1)+'[-]'+self.movptr(self.valdict[b])+'['+self.movptr(self.valdict[a])+'+'+self.movptr(self.playfield-1)+'+'+self.movptr(self.valdict[b])+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.valdict[b])+'+'+self.movptr(self.playfield-1)+'-'+']' # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_+_y
                             else:
                                 raise Exception('Variable not found')
                     else:
                         raise Exception('Variable not found')
+            elif code.startswith('sub('):
+                expr = code[4:-1]
+                w=expr.split(',')
+                if(len(w)!=2):
+                    raise Exception('sub() needs 2 arguments')
+                else:
+                    a,b=w[0],w[1]
+                    if a in self.valdict:
+                        if b.isdigit():
+                            self.bf+=self.movptr(self.valdict[a])
+                            self.bf+='+'*int(b)
+                        else:
+                            if b in self.valdict:
+                                self.bf+=self.movptr(self.playfield-1)+'[-]'+self.movptr(self.valdict[b])+'['+self.movptr(self.valdict[a])+'-'+self.movptr(self.playfield-1)+'+'+self.movptr(self.valdict[b])+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.valdict[b])+'+'+self.movptr(self.playfield-1)+'-'+']' # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_-_y
+                            else:
+                                raise Exception('Variable not found')
+                    else:
+                        raise Exception('Variable not found')
+            elif code.startswith('mul('):
+                expr = code[4:-1]
+                w=expr.split(',')
+                if(len(w)!=2):
+                    raise Exception('add() needs 2 arguments')
+                else:
+                    a,b=w[0],w[1]
+                    tmppos=self.ptr
+                    if a in self.valdict:
+                        if b.isdigit():
+                            self.bf+=self.movptr(self.playfield-3)+'[-]'+'+'*int(b)+self.movptr(self.playfield-1)+'['+'-'+']'+self.movptr(self.playfield-2)+'['+'-'+']'+self.movptr(self.valdict[a])+'['+self.movptr(self.playfield-2)+'+'+self.movptr(self.valdict[a])+'-'+']'+self.movptr(self.playfield-2)+'['+self.movptr(self.playfield-3)+'['+self.movptr(self.valdict[a])+'+'+self.movptr(self.playfield-1)+'+'+self.movptr(self.playfield-3)+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.playfield-3)+'+'+self.movptr(self.playfield-1)+'-'+']'+self.movptr(self.playfield-2)+'-'+']'+self.movptr(self.playfield-3)+'[-]'
+                        else:
+                            if b in self.valdict:
+                                self.bf+=self.movptr(self.playfield-1)+'['+'-'+']'+self.movptr(self.playfield-2)+'['+'-'+']'+self.movptr(self.valdict[a])+'['+self.movptr(self.playfield-2)+'+'+self.movptr(self.valdict[a])+'-'+']'+self.movptr(self.playfield-2)+'['+self.movptr(self.valdict[b])+'['+self.movptr(self.valdict[a])+'+'+self.movptr(self.playfield-1)+'+'+self.movptr(self.valdict[b])+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.valdict[b])+'+'+self.movptr(self.playfield-1)+'-'+']'+self.movptr(self.playfield-2)+'-'+']'
+                            else:
+                                raise Exception('Variable not found')
+                    else:
+                        raise Exception('Variable not found')
+                        # self.bf+=self.movptr(self.playfield-1)+'[-]'+self.movptr(self.playfield-2)+'[-]'+
+            elif code.startswith('print('):
+                if not (code.endswith(')')):
+                    raise Exception('Unmatched bracket')
+                s = code[6:-1]
+                tmppos=self.ptr
+                self.bf+=self.movptr(self.playfield-1)
+                for i in s:
+                    if ord(i)>255:
+                        raise Exception('print() only supports ASCII')
+                    else:
+                        self.bf += ('+'*ord(i) if ord(i)<128 else '-'*ord(256-i))+'.'+'[-]'
+                self.bf+=self.movptr(tmppos)
+    def join_semantically(self,strings):
+        res=strings[0]
+        for i,j in enumerate(strings):
+            if i==len(strings)-1:
+                break
+            if j[-1].isalpha() and strings[i+1][0].isalpha():
+                res+=' '+strings[i+1]
+            else:
+                res+=strings[i+1]
+        return res
+
+    def opt(self, prog):
+        '''Finally optimization!'''
+        curch = ''
+        curnum = 0
+        temp = []
+        prog += '@'
+        for i in prog:
+            if i == curch:
+                curnum += 1
+            else:
+                curnum += 1
+                temp.append((curnum, curch))
+                curch = i
+                curnum = 0
+        temp.append(('_', 0))
+        out = ''
+        dct = {'+': '-', '>': '<', '-': '+', '<': '>'}
+        curch = ''
+        curnum = 0
+        for i, j in temp:
+            if j in dct:
+                if curch in dct and j == dct[curch]:
+                    curnum -= i
+                    if curnum < 0:
+                        curch = dct[curch]
+                        curnum = -curnum
+                else:
+                    out+=curch*curnum
+                    if curch != j:
+                        curnum = 0
+                    curnum = i
+                    curch = j
+            else:
+                if curch:
+                    out += curch * curnum
+                curch = ''
+                out += j * i
+        return out.rstrip('+-><')
     def compile(self,prog):
         """Compiles BFFuck programs into brainfuck"""
         clean=''
         for i in prog.split('\n'):
-            clean=''.join(i.split()).split('#')[0]
+            if i.strip().startswith('print('):
+                clean=i.strip()
+            else:
+                clean=self.join_semantically(i.split()).split('#')[0]
             self.program(clean)
-        return self.bf
+        return self.bf#self.opt(self.bf)
