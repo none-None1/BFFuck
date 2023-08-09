@@ -81,7 +81,7 @@ Programs compiled from BFFuck needs you to have 8 bit cells that wrap.
 ### Disadvantages
 BFFuck currently has these disadvantages:
 1. It's numbers are 8 bit numbers.
-2. The program it generates is unoptimized.
+2. It has some bugs.
 
 
 The repository contains some examples, including a cat program and an A+B program.

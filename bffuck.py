@@ -234,4 +234,4 @@ class BFFuck(object):
             else:
                 clean=self.join_semantically(i.split()).split('#')[0]
             self.program(clean)
-        return self.bf#self.opt(self.bf)
+        return self.opt(self.bf)
