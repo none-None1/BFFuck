@@ -6,7 +6,8 @@ class BFFuck(object):
         self.bf='' # Brainfuck program
         self.ptr=0 # Current pointer
         self.mem=playfield # Leftmost unused memory
-        self.stack=[]
+        self.stack=[] # Stack for while loop
+        self.ifstack=[] # Stack for if statement
         self.playfield=playfield
         pass
     def movptr(self,pos):
@@ -71,6 +72,33 @@ class BFFuck(object):
                         else: # Skip program
                             self.temp=self.bf
                             self.stack.append(-1)
+            elif code.startswith('if('): # https://esolangs.org/wiki/Brainfuck_algorithms#if_(x)_{_code_}
+                if not (code.endswith(')')):
+                    raise Exception('Unmatched bracket')
+                else:
+                    vn = code[3:-1]
+                    if not vn.isdigit():
+                        if vn not in self.valdict:
+                            raise Exception('Variable not found')
+                        else:
+                            self.bf+=self.movptr(self.playfield-1)+'['+'-'+']'+self.movptr(self.playfield-2)+'['+'-'+']'+self.movptr(self.valdict[vn])+'['+self.movptr(self.playfield-1)+'+'+self.movptr(self.playfield-2)+'+'+self.movptr(self.valdict[vn])+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.valdict[vn])+'+'+self.movptr(self.playfield-1)+'-'+']'+self.movptr(self.playfield-2)+'['
+                            self.ifstack.append(self.valdict[vn])
+                    else:
+                        if int(vn):
+                            self.ifstack.append(-1)
+                        else:
+                            self.temp=self.bf
+                            self.stack.append(-2) # Skip program
+            if code=='endif':
+                if not self.ifstack:
+                    raise Exception('End if without if')
+                prev=self.ifstack.pop()
+                if prev==-2:
+                    self.bf=self.temp+']'
+                elif prev==-1:
+                    pass
+                else:
+                    self.bf+=self.movptr(self.playfield-2)+'[-]]'
             if code=='endwhile':
                 if not self.stack:
                     raise Exception('End while without while')
@@ -176,7 +204,6 @@ class BFFuck(object):
                     else:
                         self.bf += ('+'*ord(i) if ord(i)<128 else '-'*ord(256-i))+'.'+'[-]'
                 self.bf+=self.movptr(tmppos)
-        print(self.bf)
     def join_semantically(self,strings):
         res=strings[0]
         for i,j in enumerate(strings):

@@ -1,0 +1,7 @@
+a=in
+if(a)
+while(1)
+out(1)
+endwhile
+endif
+out(0)

@@ -71,6 +71,12 @@ print(STRING) # Without quotes
 print(Hello World!)
 ```
 
+One-branch if statement:
+```text
+if(<variable or number>)
+CODE
+endif
+```
 
 ### Platform
 BFFuck is in **pure Python** and therefore it supports any platform.
