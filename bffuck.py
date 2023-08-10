@@ -137,7 +137,7 @@ class BFFuck(object):
                     if a in self.valdict:
                         if b.isdigit():
                             self.bf+=self.movptr(self.valdict[a])
-                            self.bf+='+'*int(b)
+                            self.bf+='-'*int(b)
                         else:
                             if b in self.valdict:
                                 self.bf+=self.movptr(self.playfield-1)+'[-]'+self.movptr(self.valdict[b])+'['+self.movptr(self.valdict[a])+'-'+self.movptr(self.playfield-1)+'+'+self.movptr(self.valdict[b])+'-'+']'+self.movptr(self.playfield-1)+'['+self.movptr(self.valdict[b])+'+'+self.movptr(self.playfield-1)+'-'+']' # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_-_y
