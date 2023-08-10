@@ -1,7 +1,7 @@
 class BFFuck(object):
     """Main implemntation of BFFuck, a compiler making brainfucking easier"""
-    def __init__(self,playfield=10):
-        """Init object, playfield is the number of bytes used for temporary memory, the lesser the playfield is, the faster the final program is, but setting playfield to a number that is too small causes problems, especially if you want to use integer output. (which requires playfield to be >=10"""
+    def __init__(self,playfield=15):
+        """Init object, playfield is the number of bytes used for temporary memory, the lesser the playfield is, the faster the final program is, but setting playfield to a number that is too small causes problems, especially if you want to use integer output. """
         self.valdict={} # Variable address
         self.bf='' # Brainfuck program
         self.ptr=0 # Current pointer
@@ -93,7 +93,7 @@ class BFFuck(object):
                             self.bf+=self.movptr(self.valdict[vn])
                             self.bf+='.'
                     else:
-                        self.bf+=self.movptr(self.playfield-1)+'+'*int(vn)+'.[-]'
+                        self.bf+=self.movptr(self.playfield-1)+'[-]'+'+'*int(vn)+'.[-]'
             elif code.startswith('out('):
                 if not (code.endswith(')')):
                     raise Exception('Unmatched bracket')
@@ -108,7 +108,7 @@ class BFFuck(object):
                             self.bf+=self.movptr(0)+'>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]' # https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_(8-bit)
                             self.bf+= self.movptr(1)+'['+self.movptr(self.valdict[vn])+'+'+self.movptr(1)+'-'+']'
                     else:
-                        self.bf += self.movptr(0) + '+' * int(vn) +  '>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]'
+                        self.bf += self.movptr(0) + '[-]'+'+' * int(vn) +  '>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]'
             elif code.startswith('add('):
                 expr = code[4:-1]
                 w=expr.split(',')
@@ -176,6 +176,7 @@ class BFFuck(object):
                     else:
                         self.bf += ('+'*ord(i) if ord(i)<128 else '-'*ord(256-i))+'.'+'[-]'
                 self.bf+=self.movptr(tmppos)
+        print(self.bf)
     def join_semantically(self,strings):
         res=strings[0]
         for i,j in enumerate(strings):
@@ -229,6 +230,8 @@ class BFFuck(object):
         """Compiles BFFuck programs into brainfuck"""
         clean=''
         for i in prog.split('\n'):
+            if len(i.strip())==0:
+                continue
             if i.strip().startswith('print('):
                 clean=i.strip() # Print needs to preserve whitespaces
             else:
