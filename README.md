@@ -78,6 +78,13 @@ CODE
 endif
 ```
 
+Comparison:
+```text
+lt(x,<number>) # Compares x and the variable or number, if x is less than the variable or number, set x to 1, otherwise 0
+or
+lt(x,<variable>)
+```
+
 ### Platform
 BFFuck is in **pure Python** and therefore it supports any platform.
 
