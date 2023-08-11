@@ -399,7 +399,6 @@ class BFFuck(object):
                     else:
                         raise Exception("Variable not found")
             elif code.startswith("lt("):
-                print(self.bf)
                 expr = code[3:-1]
                 w = expr.split(",")
                 if len(w) != 2:
