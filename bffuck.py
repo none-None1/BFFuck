@@ -407,31 +407,180 @@ class BFFuck(object):
                     a, b = w[0], w[1]
                     tmppos = self.ptr
                     if a in self.valdict:
-                        post=False
+                        post = False
                         if b.isdigit():
-                            self.bf+=self.movptr(self.playfield-1)+'+'*int(b)
-                            b=self.playfield-1
-                            post=True
+                            self.bf += self.movptr(self.playfield - 1) + "+" * int(b)
+                            b = self.playfield - 1
+                            post = True
                         else:
                             if b in self.valdict:
-                                b=self.valdict[b]
+                                b = self.valdict[b]
                             else:
                                 raise Exception("Variable not found")
-                        self.bf+=self.movptr(0) + "[" + "-" + "]" + self.movptr(
-                            1) + "[" + "-" + "]" + ">" + "[" + "-" + "]" + "+" + ">" + "[" + "-" + "]" + "<" + "<" + self.movptr(
-                            b) + "[" + self.movptr(0) + "+" + self.movptr(1) + "+" + self.movptr(
-                            b) + "-" + "]" + self.movptr(0) + "[" + self.movptr(
-                            b) + "+" + self.movptr(0) + "-" + "]" + self.movptr(
-                            self.valdict[a]) + "[" + self.movptr(0) + "+" + self.movptr(
-                            self.valdict[a]) + "-" + "]" + "+" + self.movptr(
-                            1) + "[" + ">" + "-" + "]" + ">" + "[" + "<" + self.movptr(
-                            self.valdict[a]) + "-" + self.movptr(0) + "[" + "-" + "]" + self.movptr(
-                            1) + ">" + "-" + ">" + "]" + "<" + "+" + "<" + self.movptr(0) + "[" + self.movptr(
-                            1) + "-" + "[" + ">" + "-" + "]" + ">" + "[" + "<" + self.movptr(
-                            self.valdict[a]) + "-" + self.movptr(0) + "[" + "-" + "]" + "+" + self.movptr(
-                            1) + ">" + "-" + ">" + "]" + "<" + "+" + "<" + self.movptr(0) + "-" + "]" # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_%3C_y
+                        self.bf += (
+                            self.movptr(0)
+                            + "["
+                            + "-"
+                            + "]"
+                            + self.movptr(1)
+                            + "["
+                            + "-"
+                            + "]"
+                            + ">"
+                            + "["
+                            + "-"
+                            + "]"
+                            + "+"
+                            + ">"
+                            + "["
+                            + "-"
+                            + "]"
+                            + "<"
+                            + "<"
+                            + self.movptr(b)
+                            + "["
+                            + self.movptr(0)
+                            + "+"
+                            + self.movptr(1)
+                            + "+"
+                            + self.movptr(b)
+                            + "-"
+                            + "]"
+                            + self.movptr(0)
+                            + "["
+                            + self.movptr(b)
+                            + "+"
+                            + self.movptr(0)
+                            + "-"
+                            + "]"
+                            + self.movptr(self.valdict[a])
+                            + "["
+                            + self.movptr(0)
+                            + "+"
+                            + self.movptr(self.valdict[a])
+                            + "-"
+                            + "]"
+                            + "+"
+                            + self.movptr(1)
+                            + "["
+                            + ">"
+                            + "-"
+                            + "]"
+                            + ">"
+                            + "["
+                            + "<"
+                            + self.movptr(self.valdict[a])
+                            + "-"
+                            + self.movptr(0)
+                            + "["
+                            + "-"
+                            + "]"
+                            + self.movptr(1)
+                            + ">"
+                            + "-"
+                            + ">"
+                            + "]"
+                            + "<"
+                            + "+"
+                            + "<"
+                            + self.movptr(0)
+                            + "["
+                            + self.movptr(1)
+                            + "-"
+                            + "["
+                            + ">"
+                            + "-"
+                            + "]"
+                            + ">"
+                            + "["
+                            + "<"
+                            + self.movptr(self.valdict[a])
+                            + "-"
+                            + self.movptr(0)
+                            + "["
+                            + "-"
+                            + "]"
+                            + "+"
+                            + self.movptr(1)
+                            + ">"
+                            + "-"
+                            + ">"
+                            + "]"
+                            + "<"
+                            + "+"
+                            + "<"
+                            + self.movptr(0)
+                            + "-"
+                            + "]"
+                        )  # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_%3C_y
                         if post:
-                            self.bf+=self.movptr(b)+'[-]'
+                            self.bf += self.movptr(b) + "[-]"
+                    else:
+                        raise Exception("Variable not found")
+            elif code.startswith("eq("):
+                expr = code[3:-1]
+                w = expr.split(",")
+                if len(w) != 2:
+                    raise Exception("eq() needs 2 arguments")
+                else:
+                    a, b = w[0], w[1]
+                    tmppos = self.ptr
+                    if a in self.valdict:
+                        post = False
+                        if b.isdigit():
+                            self.bf += self.movptr(self.playfield - 1) + "+" * int(b)
+                            b = self.playfield - 1
+                            post = True
+                        else:
+                            if b in self.valdict:
+                                b = self.valdict[b]
+                            else:
+                                raise Exception("Variable not found")
+                        self.bf += (
+                            self.movptr(self.playfield - 1)
+                            + "["
+                            + "-"
+                            + "]"
+                            + self.movptr(self.playfield - 2)
+                            + "["
+                            + "-"
+                            + "]"
+                            + self.movptr(self.valdict[a])
+                            + "["
+                            + self.movptr(self.playfield - 2)
+                            + "+"
+                            + self.movptr(self.valdict[a])
+                            + "-"
+                            + "]"
+                            + "+"
+                            + self.movptr(b)
+                            + "["
+                            + self.movptr(self.playfield - 2)
+                            + "-"
+                            + self.movptr(self.playfield - 1)
+                            + "+"
+                            + self.movptr(b)
+                            + "-"
+                            + "]"
+                            + self.movptr(self.playfield - 1)
+                            + "["
+                            + self.movptr(b)
+                            + "+"
+                            + self.movptr(self.playfield - 1)
+                            + "-"
+                            + "]"
+                            + self.movptr(self.playfield - 2)
+                            + "["
+                            + self.movptr(self.valdict[a])
+                            + "-"
+                            + self.movptr(self.playfield - 2)
+                            + "["
+                            + "-"
+                            + "]"
+                            + "]"
+                        )  # https://esolangs.org/wiki/Brainfuck_algorithms#x%C2%B4_=_x_==_y
+                        if post:
+                            self.bf += self.movptr(b) + "[-]"
                     else:
                         raise Exception("Variable not found")
             elif code.startswith("print("):
@@ -513,3 +662,4 @@ class BFFuck(object):
                 clean = self.join_semantically(i.split()).split("#")[0]
             self.program(clean)
         return self.opt(self.bf)
+
