@@ -84,7 +84,7 @@ lt(x,<number>) # Compares x and the variable or number, if x is less than the va
 or
 lt(x,<variable>)
 
-eq(x,<number>) # Compares x and the variable or number, if x is equal the variable or number, set x to 1, otherwise 0
+eq(x,<number>) # Compares x and the variable or number, if x is equal to the variable or number, set x to 1, otherwise 0
 or
 eq(x,<variable>)
 ```
