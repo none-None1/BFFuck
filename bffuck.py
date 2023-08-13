@@ -212,11 +212,11 @@ class BFFuck(object):
                                 + ">>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]"
                             )  # https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_(8-bit)
                             self.bf += (
-                                self.movptr(1)
+                                self.movptr(self.playfield-1)
                                 + "["
                                 + self.movptr(self.valdict[vn])
                                 + "+"
-                                + self.movptr(1)
+                                + self.movptr(self.playfield-1)
                                 + "-"
                                 + "]"
                             )
