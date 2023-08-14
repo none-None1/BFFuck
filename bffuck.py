@@ -528,7 +528,7 @@ class BFFuck(object):
                     if a in self.valdict:
                         post = False
                         if b.isdigit():
-                            self.bf += self.movptr(self.playfield - 1) + "+" * int(b)
+                            self.bf += self.movptr(self.playfield - 3) + "+" * int(b)
                             b = self.playfield - 3
                             post = True
                         else:
