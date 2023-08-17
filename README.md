@@ -49,6 +49,13 @@ or
 mul(x,<variable>)
 ```
 
+Modulo:
+```
+mod(x,<number>)
+or
+mod(x,<variable>)
+```
+
 While loop:
 ```text
 while(<variable or number>)

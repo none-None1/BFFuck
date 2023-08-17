@@ -1,0 +1,9 @@
+a=in
+mod(a,2)
+if(a)
+print(Odd!)
+endif
+eq(a,0)
+if(a)
+print(Even!)
+endif

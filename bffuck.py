@@ -212,11 +212,11 @@ class BFFuck(object):
                                 + ">>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<[-]"
                             )  # https://esolangs.org/wiki/Brainfuck_algorithms#Print_value_of_cell_x_as_number_(8-bit)
                             self.bf += (
-                                self.movptr(self.playfield-1)
+                                self.movptr(self.playfield - 1)
                                 + "["
                                 + self.movptr(self.valdict[vn])
                                 + "+"
-                                + self.movptr(self.playfield-1)
+                                + self.movptr(self.playfield - 1)
                                 + "-"
                                 + "]"
                             )
@@ -583,6 +583,65 @@ class BFFuck(object):
                             self.bf += self.movptr(b) + "[-]"
                     else:
                         raise Exception("Variable not found")
+            elif code.startswith("mod("):
+                expr = code[4:-1]
+                w = expr.split(",")
+                if len(w) != 2:
+                    raise Exception("mod() needs 2 arguments")
+                else:
+                    a, b = w[0], w[1]
+                    if a in self.valdict:
+                        self.bf += (
+                            self.movptr(self.valdict[a])
+                            + "["
+                            + self.movptr(1)
+                            + "+"
+                            + self.movptr(self.valdict[a])
+                            + "-]"
+                        )
+                        if b.isdigit():
+                            self.bf += self.movptr(3) + "+" * int(b)
+                            post = False
+                        else:
+                            if b in self.valdict:
+                                self.bf += (
+                                    self.movptr(self.valdict[b])
+                                    + "["
+                                    + self.movptr(3)
+                                    + "+"
+                                    + self.movptr(self.playfield - 1)
+                                    + "+"
+                                    + self.movptr(self.valdict[b])
+                                    + "-]"
+                                )
+                                post = True
+                            else:
+                                raise Exception("Variable not found")
+                        self.bf += (
+                            self.movptr(1)
+                            + "[>+>->+<[>]>[<+>-]<<[<]>-]"
+                            + self.movptr(2)
+                            + "[-]"
+                            + self.movptr(3)
+                            + "[-]"
+                            + self.movptr(4)
+                            + "["
+                            + self.movptr(self.valdict[a])
+                            + "+"
+                            + self.movptr(4)
+                            + "-]"
+                        )  # https://esolangs.org/wiki/Brainfuck_algorithms#Modulus_algorithm
+                        if post:
+                            self.bf += (
+                                self.movptr(self.playfield - 1)
+                                + "["
+                                + self.movptr(self.valdict[b])
+                                + "+"
+                                + self.movptr(self.playfield - 1)
+                                + "-]"
+                            )
+                    else:
+                        raise Exception("Variable not found")
             elif code.startswith("print("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
@@ -662,4 +721,3 @@ class BFFuck(object):
                 clean = self.join_semantically(i.split()).split("#")[0]
             self.program(clean)
         return self.opt(self.bf)
-
