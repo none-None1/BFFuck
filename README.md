@@ -78,10 +78,16 @@ print(STRING) # Without quotes
 print(Hello World!)
 ```
 
-One-branch if statement:
+If statement:
 ```text
 if(<variable or number>)
 CODE
+endif
+
+if(<variable or number>)
+CODE1
+else
+CODE2
 endif
 ```
 

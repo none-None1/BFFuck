@@ -169,7 +169,56 @@ class BFFuck(object):
                 else:
                     self.bf += self.movptr(prev)
                     self.bf += "]"
-
+            if code == "else":
+                if not self.ifstack:
+                    raise Exception("Else without if")
+                prev = self.ifstack.pop()
+                if prev == -2:
+                    self.bf = self.temp + "]"
+                    self.ifstack.append(-1)
+                elif prev == -1:
+                    self.temp = self.bf
+                    self.ifstack.append(-2)
+                else:
+                    self.valdict["0"] = self.mem
+                    self.mem += 1
+                    self.bf += (
+                        self.movptr(self.valdict["0"])
+                        + "+"
+                        + self.movptr(self.playfield - 2)
+                        + "[-]]"
+                        + self.movptr(self.valdict["0"])
+                        + "-"
+                    )
+                    self.bf += (
+                        self.movptr(self.playfield - 1)
+                        + "["
+                        + "-"
+                        + "]"
+                        + self.movptr(self.playfield - 2)
+                        + "["
+                        + "-"
+                        + "]"
+                        + self.movptr(self.valdict["0"])
+                        + "["
+                        + self.movptr(self.playfield - 1)
+                        + "+"
+                        + self.movptr(self.playfield - 2)
+                        + "+"
+                        + self.movptr(self.valdict["0"])
+                        + "-"
+                        + "]"
+                        + self.movptr(self.playfield - 1)
+                        + "["
+                        + self.movptr(self.valdict["0"])
+                        + "+"
+                        + self.movptr(self.playfield - 1)
+                        + "-"
+                        + "]"
+                        + self.movptr(self.playfield - 2)
+                        + "["
+                    )
+                    self.ifstack.append(self.valdict["0"])
             if code.startswith("outc("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
