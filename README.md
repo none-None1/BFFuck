@@ -1,8 +1,6 @@
 # BFFuck
  Makes brainfucking easier
 
-This is a work in progress
-
 The tools is an esoteric language that compiles to brainfuck, using algorithms in [brainfuck algorithms](https://esolangs.org/wiki/Brainfuck_algorithms).
 
 ### Usage:
