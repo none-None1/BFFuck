@@ -497,7 +497,7 @@ class BFFuck(object):
                             + "[-]"
                             + power_series[ivn]
                             + ".[-]"
-                            + ("<" if ivn in list(range(10, 100)) else "")
+                            + ("<" if ivn in list(range(20, 100)) else "")
                         )
             elif code.startswith("out("):
                 if not (code.endswith(")")):
@@ -538,7 +538,7 @@ class BFFuck(object):
                             + "[-]"
                             + power_series[ivn]
                             + ">[-]>[-]+>[-]+<[>[-<-<<[->+>+<<]>[-<+>]>>]++++++++++>[-]+>[-]>[-]>[-]<<<<<[->-[>+>>]>[[-<+>]+>+>>]<<<<<]>>-[-<<+>>]<[-]++++++++[-<++++++>]>>[-<<+>>]<<]<[.[-]<]<[-]"
-                            + ("<" if ivn in list(range(10, 100)) else "")
+                            + ("<" if ivn in list(range(20, 100)) else "")
                         )
             elif code.startswith("add("):
                 expr = code[4:-1]
