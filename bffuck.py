@@ -493,7 +493,7 @@ class BFFuck(object):
                     else:
                         ivn = int(vn) & 255
                         self.bf += (
-                            self.movptr(self.playfield - 1)
+                            self.movptr(self.playfield - 2)
                             + "[-]"
                             + power_series[ivn]
                             + ".[-]"
