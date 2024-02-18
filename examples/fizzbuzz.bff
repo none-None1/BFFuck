@@ -1,0 +1,31 @@
+i=1
+a=101
+b=1
+eq(a,i)
+sub(b,a)
+while(b)
+	t=i
+	mod(t,3)
+	u=i
+	mod(u,5)
+	if(t)
+		if(u)
+			out(i)
+		else
+			print(Buzz)
+		endif
+
+	else
+		if(u)
+			print(Fizz)
+		else
+			print(FizzBuzz)
+		endif
+        endif
+	outc(10)
+	add(i,1)
+	a=101
+	b=1
+	eq(a,i)
+	sub(b,a)
+endwhile
