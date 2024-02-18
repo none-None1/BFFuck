@@ -269,6 +269,9 @@ class BFFuck(object):
         self.mem = playfield  # Leftmost unused memory
         self.stack = []  # Stack for while loop
         self.ifstack = []  # Stack for if statement
+        self.ifvarstack = []
+        self.whilevarstack = []
+        self.haveelse=[]
         self.playfield = playfield
         pass
 
@@ -367,59 +370,69 @@ class BFFuck(object):
             elif code.startswith(
                 "if("
             ):  # https://esolangs.org/wiki/Brainfuck_algorithms#if_(x)_{_code_}
+                self.haveelse.append(False)
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
                 else:
                     vn = code[3:-1]
+                    x,y,z=self.mem,self.mem+1,self.mem+2
+                    self.mem+=3
                     if not vn.isdigit():
                         if vn not in self.valdict:
                             raise Exception("Variable not found")
                         else:
                             self.bf += (
-                                self.movptr(self.playfield - 1)
+                                self.movptr(x)
                                 + "["
                                 + "-"
                                 + "]"
-                                + self.movptr(self.playfield - 2)
+                                + self.movptr(y)
                                 + "["
                                 + "-"
                                 + "]"
                                 + self.movptr(self.valdict[vn])
                                 + "["
-                                + self.movptr(self.playfield - 1)
+                                + self.movptr(x)
                                 + "+"
-                                + self.movptr(self.playfield - 2)
+                                + self.movptr(y)
                                 + "+"
                                 + self.movptr(self.valdict[vn])
                                 + "-"
                                 + "]"
-                                + self.movptr(self.playfield - 1)
+                                + self.movptr(x)
                                 + "["
                                 + self.movptr(self.valdict[vn])
                                 + "+"
-                                + self.movptr(self.playfield - 1)
+                                + self.movptr(x)
                                 + "-"
-                                + "]"
-                                + self.movptr(self.playfield - 2)
+                                + "]+"
+                                + self.movptr(y)
                                 + "["
                             )
                             self.ifstack.append(self.valdict[vn])
+                            self.ifvarstack.append(x)
                     else:
+                        self.ifvarstack.append(-1)
                         if int(vn):
                             self.ifstack.append(-1)
                         else:
                             self.temp = self.bf
-                            self.stack.append(-2)  # Skip program
+                            self.ifstack.append(-2)  # Skip program
             if code == "endif":
                 if not self.ifstack:
                     raise Exception("End if without if")
                 prev = self.ifstack.pop()
+                x=self.ifvarstack.pop()
                 if prev == -2:
                     self.bf = self.temp + "]"
                 elif prev == -1:
                     pass
                 else:
-                    self.bf += self.movptr(self.playfield - 2) + "[-]]"
+                    if not self.haveelse[-1]:
+                        self.bf += self.movptr(x+1) + "[-]]"
+                    else:
+                        self.bf+=self.movptr(x)+'-]'
+                    self.haveelse.pop()
             if code == "endwhile":
                 if not self.stack:
                     raise Exception("End while without while")
@@ -430,9 +443,13 @@ class BFFuck(object):
                     self.bf += self.movptr(prev)
                     self.bf += "]"
             if code == "else":
+                self.haveelse[-1]=True
                 if not self.ifstack:
                     raise Exception("Else without if")
                 prev = self.ifstack.pop()
+                x=self.ifvarstack.pop()
+                y=x+1
+                z=prev
                 if prev == -2:
                     self.bf = self.temp + "]"
                     self.ifstack.append(-1)
@@ -440,45 +457,9 @@ class BFFuck(object):
                     self.temp = self.bf
                     self.ifstack.append(-2)
                 else:
-                    self.valdict["0"] = self.mem
-                    self.mem += 1
-                    self.bf += (
-                        self.movptr(self.valdict["0"])
-                        + "+"
-                        + self.movptr(self.playfield - 2)
-                        + "[-]]"
-                        + self.movptr(self.valdict["0"])
-                        + "-"
-                    )
-                    self.bf += (
-                        self.movptr(self.playfield - 1)
-                        + "["
-                        + "-"
-                        + "]"
-                        + self.movptr(self.playfield - 2)
-                        + "["
-                        + "-"
-                        + "]"
-                        + self.movptr(self.valdict["0"])
-                        + "["
-                        + self.movptr(self.playfield - 1)
-                        + "+"
-                        + self.movptr(self.playfield - 2)
-                        + "+"
-                        + self.movptr(self.valdict["0"])
-                        + "-"
-                        + "]"
-                        + self.movptr(self.playfield - 1)
-                        + "["
-                        + self.movptr(self.valdict["0"])
-                        + "+"
-                        + self.movptr(self.playfield - 1)
-                        + "-"
-                        + "]"
-                        + self.movptr(self.playfield - 2)
-                        + "["
-                    )
-                    self.ifstack.append(self.valdict["0"])
+                    self.bf+=self.movptr(x)+'-'+self.movptr(y)+"[-]]"+self.movptr(x)+"["
+                    self.ifstack.append(z)
+                    self.ifvarstack.append(x)
             if code.startswith("outc("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
@@ -493,7 +474,7 @@ class BFFuck(object):
                     else:
                         ivn = int(vn) & 255
                         self.bf += (
-                            self.movptr(self.playfield - 1)
+                            self.movptr(self.playfield - 2)
                             + "[-]"
                             + power_series[ivn]
                             + ".[-]"
