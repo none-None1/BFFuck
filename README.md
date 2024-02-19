@@ -1,3 +1,5 @@
+[![Downloads](https://static.pepy.tech/badge/bffuck)](https://pepy.tech/project/bffuck) [![Downloads](https://static.pepy.tech/badge/bffuck/month)](https://pepy.tech/project/bffuck) [![Downloads](https://static.pepy.tech/badge/bffuck/week)](https://pepy.tech/project/bffuck)
+
 # BFFuck
  Makes brainfucking easier
 
