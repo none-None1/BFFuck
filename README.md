@@ -110,7 +110,7 @@ Programs compiled from BFFuck needs you to have 8 bit cells that wrap.
 
 ### Disadvantages
 BFFuck currently has these disadvantages:
-1. <s>It's numbers are 8 bit numbers.</s> You can choose 8-bit, 16-bit or 32-bit numbers using the `byte` keyword argument. But you need to run it on a 8-bit interpreter.
+1. <s>It's numbers are 8 bit numbers.</s> You can choose 8-bit, 16-bit or 32-bit numbers using the `byte` keyword argument. But you need to run it on a 8-bit interpreter. <font color="red">REMEMBER: Using numbers with more bits is slower and increases the size of program largely!</font>
 2. It has some bugs.
 
 
