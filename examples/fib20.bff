@@ -1,0 +1,15 @@
+# This example computes the first 20 terms of Fibonacci sequence, as opposed to the one in Esolang which only computes the first 14, as such, you need byte=2 or byte=4 to compile this
+a=0
+b=1
+c=20
+d=0
+while(c)
+sub(c,1)
+add(d,a)
+add(d,b)
+out(a)
+outc(10)
+a=b
+b=d
+d=0
+endwhile
