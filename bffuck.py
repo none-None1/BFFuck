@@ -1,24 +1,52 @@
-multipliers=['[>++++++++++<-]>','[<++++++++++>-]<']
-expanders={1: {'>': '>', '<': '<', '+': '+', '-': '-', '[': '[', ']': ']'}, 2: {'>': '>>>>', '<': '<<<<', '+': '>+<+[>-]>[->>+<]<<', '-': '>+<[>-]>[->>-<]<<-', '[': '>+<[>-]>[->+>[<-]<[<]>[-<+>]]<-[+<', ']': '>+<[>-]>[->+>[<-]<[<]>[-<+>]]<-]<'}, 4: {'>': '>>>>>', '<': '<<<<<', '+': '+[<+>>>>>+<<<<-]<[>+<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>+[<<+>>>>>+<<<-]<<[>>+<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>+[<<<+>>>>>+<<-]<<<[>>>+<<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>>+<<<<]]]>', '-': '[<+>>>>>+<<<<-]<[>+<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>[<<+>>>>>+<<<-]<<[>>+<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>[<<<+>>>>>+<<-]<<<[>>>+<<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>>-<<<<]>>>-<<<]>>-<<]>-', '[': '[>>>>+>>>>>+<<<<<<<<<-]>>>>>>>>>[<<<<<<<<<+>>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<[>>>+>>>>>+<<<<<<<<-]>>>>>>>>[<<<<<<<<+>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<[>>+>>>>>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<[>+>>>>>+<<<<<<-]>>>>>>[<<<<<<+>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<<<[[-]>', ']': '[>>>>+>>>>>+<<<<<<<<<-]>>>>>>>>>[<<<<<<<<<+>>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<[>>>+>>>>>+<<<<<<<<-]>>>>>>>>[<<<<<<<<+>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<[>>+>>>>>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<[>+>>>>>+<<<<<<-]>>>>>>[<<<<<<+>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<<<]>'}}
-def _power_series(x,m):
+import re
+
+multipliers = ["[>++++++++++<-]>", "[<++++++++++>-]<"]
+expanders = {
+    1: {">": ">", "<": "<", "+": "+", "-": "-", "[": "[", "]": "]"},
+    2: {
+        ">": ">>>>",
+        "<": "<<<<",
+        "+": ">+<+[>-]>[->>+<]<<",
+        "-": ">+<[>-]>[->>-<]<<-",
+        "[": ">+<[>-]>[->+>[<-]<[<]>[-<+>]]<-[+<",
+        "]": ">+<[>-]>[->+>[<-]<[<]>[-<+>]]<-]<",
+    },
+    4: {
+        ">": ">>>>>",
+        "<": "<<<<<",
+        "+": "+[<+>>>>>+<<<<-]<[>+<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>+[<<+>>>>>+<<<-]<<[>>+<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>+[<<<+>>>>>+<<-]<<<[>>>+<<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>>+<<<<]]]>",
+        "-": "[<+>>>>>+<<<<-]<[>+<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>[<<+>>>>>+<<<-]<<[>>+<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>[<<<+>>>>>+<<-]<<<[>>>+<<<-]+>>>>>[<<<<<->>>>>[-]]<<<<<[->>>>-<<<<]>>>-<<<]>>-<<]>-",
+        "[": "[>>>>+>>>>>+<<<<<<<<<-]>>>>>>>>>[<<<<<<<<<+>>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<[>>>+>>>>>+<<<<<<<<-]>>>>>>>>[<<<<<<<<+>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<[>>+>>>>>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<[>+>>>>>+<<<<<<-]>>>>>>[<<<<<<+>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<<<[[-]>",
+        "]": "[>>>>+>>>>>+<<<<<<<<<-]>>>>>>>>>[<<<<<<<<<+>>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<[>>>+>>>>>+<<<<<<<<-]>>>>>>>>[<<<<<<<<+>>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<[>>+>>>>>+<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<[>+>>>>>+<<<<<<-]>>>>>>[<<<<<<+>>>>>>-]<<<<<[[-]<<<<<+>>>>>]<<<<<]>",
+    },
+}
+
+
+def _power_series(x, m):
     if not x:
-        return ''
-    if x<10:
-        return '+'*x
-    x=str(x)
-    top,rest=x[0],x[1:]
-    return '+'*int(top)+multipliers[m]+_power_series(int(rest),1-m)
+        return ""
+    if x < 10:
+        return "+" * x
+    x = str(x)
+    top, rest = x[0], x[1:]
+    return "+" * int(top) + multipliers[m] + _power_series(int(rest), 1 - m)
+
+
 def power_series(x):
     if not x:
-        return ''
-    if len(str(x))&1:
-        return _power_series(x,0)
-    return _power_series(x,0)+'[<+>-]'
+        return ""
+    if len(str(x)) & 1:
+        return _power_series(x, 0)
+    return _power_series(x, 0) + "[<+>-]"
+
+
 def getstr(x):
-    normal,power='+'*x,power_series(x)
-    if len(normal)<len(power):
+    normal, power = "+" * x, power_series(x)
+    if len(normal) < len(power):
         return normal
     return power
+
+
 class BFFuck(object):
     """Main implementation of BFFuck, a compiler making brainfucking easier"""
 
@@ -32,7 +60,7 @@ class BFFuck(object):
         self.ifstack = []  # Stack for if statement
         self.ifvarstack = []
         self.whilevarstack = []
-        self.haveelse=[]
+        self.haveelse = []
         self.playfield = playfield
         pass
 
@@ -136,8 +164,8 @@ class BFFuck(object):
                     raise Exception("Unmatched bracket")
                 else:
                     vn = code[3:-1]
-                    x,y,z=self.mem,self.mem+1,self.mem+2
-                    self.mem+=3
+                    x, y, z = self.mem, self.mem + 1, self.mem + 2
+                    self.mem += 3
                     if not vn.isdigit():
                         if vn not in self.valdict:
                             raise Exception("Variable not found")
@@ -183,16 +211,16 @@ class BFFuck(object):
                 if not self.ifstack:
                     raise Exception("End if without if")
                 prev = self.ifstack.pop()
-                x=self.ifvarstack.pop()
+                x = self.ifvarstack.pop()
                 if prev == -2:
                     self.bf = self.temp + "]"
                 elif prev == -1:
                     pass
                 else:
                     if not self.haveelse[-1]:
-                        self.bf += self.movptr(x+1) + "[-]]"
+                        self.bf += self.movptr(x + 1) + "[-]]"
                     else:
-                        self.bf+=self.movptr(x)+'-]'
+                        self.bf += self.movptr(x) + "-]"
                     self.haveelse.pop()
             if code == "endwhile":
                 if not self.stack:
@@ -204,13 +232,13 @@ class BFFuck(object):
                     self.bf += self.movptr(prev)
                     self.bf += "]"
             if code == "else":
-                self.haveelse[-1]=True
+                self.haveelse[-1] = True
                 if not self.ifstack:
                     raise Exception("Else without if")
                 prev = self.ifstack.pop()
-                x=self.ifvarstack.pop()
-                y=x+1
-                z=prev
+                x = self.ifvarstack.pop()
+                y = x + 1
+                z = prev
                 if prev == -2:
                     self.bf = self.temp + "]"
                     self.ifstack.append(-1)
@@ -218,7 +246,14 @@ class BFFuck(object):
                     self.temp = self.bf
                     self.ifstack.append(-2)
                 else:
-                    self.bf+=self.movptr(x)+'-'+self.movptr(y)+"[-]]"+self.movptr(x)+"["
+                    self.bf += (
+                        self.movptr(x)
+                        + "-"
+                        + self.movptr(y)
+                        + "[-]]"
+                        + self.movptr(x)
+                        + "["
+                    )
                     self.ifstack.append(z)
                     self.ifvarstack.append(x)
             if code.startswith("outc("):
@@ -234,12 +269,7 @@ class BFFuck(object):
                             self.bf += "."
                     else:
                         ivn = int(vn)
-                        self.bf += (
-                            self.movptr(0)
-                            + "[-]"
-                            + getstr(ivn)
-                            + ".[-]"
-                        )
+                        self.bf += self.movptr(0) + "[-]" + getstr(ivn) + ".[-]"
             elif code.startswith("out("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
@@ -761,20 +791,92 @@ class BFFuck(object):
                 curch = ""
                 out += j * i
         return out.rstrip("+-><")
+
     def expand(self, prog, byte):
         """Expand program"""
-        if byte not in (1,2,4):
-            raise ValueError('Byte should by 1, 2, or 4, not {}'.format(byte))
-        res=('' if byte!=4 else '>')
+        if byte not in (1, 2, 4):
+            raise ValueError("Byte should by 1, 2, or 4, not {}".format(byte))
+        res = "" if byte != 4 else ">"
         for i in prog:
             if i in expanders[byte]:
-                res+=expanders[byte][i]
+                res += expanders[byte][i]
             else:
-                res+=i
+                res += i
         return res
+
+    def getmacros(self, prog):
+        macros = {}
+        macro = []
+        no_macro = []
+        macro_name = ""
+        for i in prog.split("\n"):
+            i = i.strip()
+            if i == "endmacro":
+                macros[macro_name] = macro
+                macro_name = ""
+                macro = []
+                continue
+            if macro_name:
+                macro.append(i)
+                continue
+            y = i
+            while "  " in y:
+                y = y.replace("  ", " ")
+            y, k = y[: y.find(" ")], y[y.find(" ") :].replace(" ", "")
+            if y == "macro":
+                if not k.startswith("$"):
+                    raise SyntaxError("Macros must start with '$'")
+                macro_name = k
+            else:
+                no_macro.append(i)
+        return (macros, "\n".join(no_macro))
+
+    def can_be_preprocessed(self, prog):
+        macros, no_macro = self.getmacros(prog)
+        for i in no_macro.split("\n"):
+            if i.startswith("$"):
+                return True
+        return False
+
+    def preprocess(self, macros, no_macro):
+        """Preprocess macros"""
+        res = []
+        for i in no_macro.split("\n"):
+            i = i.strip()
+            if i.startswith("$"):
+                if "(" not in i:
+                    res += macros[i]
+                else:
+                    mac_name, mac_args = i[: i.find("(")], i[i.find("(") :]
+                    for name, info in macros.items():
+                        if name.startswith(mac_name + "("):
+                            _args = name[name.find("(") :]
+                            args1, args2 = mac_args[1:-1].split(","), _args[1:-1].split(
+                                ","
+                            )
+                            if len(args1) != len(args2):
+                                raise SyntaxError("Argument table length wrong")
+                            for j in info:
+                                if j.strip().startswith("print("):
+                                    res.append(j)
+                                else:
+                                    t = j
+                                    for _i, _j in zip(args2, args1):
+                                        t = re.sub("\\b" + re.escape(_i) + "\\b", _j, t)
+                                    res.append(t)
+                            break
+
+            else:
+                res.append(i)
+        return "\n".join(res)
+
     def compile(self, prog, byte=1):
         """Compiles BFFuck programs into brainfuck"""
         clean = ""
+        macros, no_macro = self.getmacros(prog)
+        while self.can_be_preprocessed(prog):
+            prog = self.preprocess(macros, no_macro)
+            _, no_macro = self.getmacros(prog)
         for i in prog.split("\n"):
             if len(i.strip()) == 0:
                 continue
@@ -783,4 +885,4 @@ class BFFuck(object):
             else:
                 clean = self.join_semantically(i.split()).split("#")[0]
             self.program(clean)
-        return self.opt(self.expand(self.opt(self.bf),byte))
+        return self.opt(self.expand(self.opt(self.bf), byte))

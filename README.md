@@ -102,6 +102,19 @@ or
 eq(x,<variable>)
 ```
 
+Macros:
+```text
+macro $<name> # Macro with no arguments
+CODE
+endmacro
+
+macro $<name>(<arg1>,<arg2>,...) # Macro with arguments
+CODE
+endmacro
+
+$<name> # Using a macro with no arguments
+$<name>(<arg1>,<arg2>,...) # Using a macro with arguments
+```
 ### Platform
 BFFuck is in **pure Python** and therefore it supports any platform.
 
