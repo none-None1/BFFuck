@@ -1,0 +1,19 @@
+macro $c(a,b)
+c=0
+add(c,a)
+add(c,b)
+out(c)
+outc(10)
+endmacro
+macro $d(a,b)
+print(First operand: )
+out(a)
+outc(10)
+print(Second operand: )
+out(b)
+outc(10)
+print(Sum: )
+$c(a,b)
+endmacro
+$d(3,7)
+$d(5,6)
