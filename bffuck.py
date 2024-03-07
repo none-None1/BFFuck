@@ -842,7 +842,7 @@ class BFFuck(object):
         """Preprocess macros"""
         res = []
         for i in no_macro.split("\n"):
-            i = i.strip()
+            i = i.split("#")[0].strip()
             if i.startswith("$"):
                 if "(" not in i:
                     res += macros[i]
