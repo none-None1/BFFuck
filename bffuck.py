@@ -22,22 +22,24 @@ expanders = {
 }
 
 
-def _power_series(x, m):
-    if not x:
+def _power_series(k, m):
+    x=int(k)
+    if not k:
+        return ''
+    if not x and len(k)<2:
         return ""
-    if x < 10:
+    if len(k)<2:
         return "+" * x
-    x = str(x)
-    top, rest = x[0], x[1:]
-    return "+" * int(top) + multipliers[m] + _power_series(int(rest), 1 - m)
+    top, rest = k[0], k[1:]
+    return "+" * int(top) + multipliers[m] + _power_series(rest, 1 - m)
 
 
 def power_series(x):
     if not x:
         return ""
     if len(str(x)) & 1:
-        return _power_series(x, 0)
-    return _power_series(x, 0) + "[<+>-]"
+        return _power_series(str(x), 0)
+    return _power_series(str(x), 0) + "[<+>-]<"
 
 
 def getstr(x):
@@ -88,7 +90,7 @@ class BFFuck(object):
             else:
                 self.bf += self.movptr(self.mem)
                 self.valdict[val] = self.mem
-                self.mem += 1
+                self.mem += 2
             if stmt == "inc":
                 self.bf += ","
             elif stmt == "in":
@@ -150,7 +152,7 @@ class BFFuck(object):
                     else:
                         if int(vn):  # while(1) is equivalent to while(2), while(3), etc
                             self.valdict["0"] = self.mem
-                            self.mem += 1
+                            self.mem += 2
                             self.bf += self.movptr(self.valdict["0"]) + "+["
                             self.stack.append(self.valdict["0"])
                         else:  # Skip program
@@ -165,7 +167,7 @@ class BFFuck(object):
                 else:
                     vn = code[3:-1]
                     x, y, z = self.mem, self.mem + 1, self.mem + 2
-                    self.mem += 3
+                    self.mem += 6
                     if not vn.isdigit():
                         if vn not in self.valdict:
                             raise Exception("Variable not found")
@@ -730,17 +732,20 @@ class BFFuck(object):
                     raise Exception("Unmatched bracket")
                 s = code[6:-1]
                 tmppos = self.ptr
-                self.bf += self.movptr(self.playfield - 1)
+                self.bf += self.movptr(self.playfield - 2)
                 for i in s:
                     if ord(i) > 255:
                         raise Exception("print() only supports ASCII")
                     else:
-                        self.bf += (
-                            ("+" * ord(i) if ord(i) < 128 else "-" * ord(256 - i))
-                            + "."
-                            + "[-]"
-                        )
+                        self.bf += getstr(ord(i))+'.'+'[-]'
                 self.bf += self.movptr(tmppos)
+            elif code.startswith("ptr("):
+                if not (code.endswith(")")):
+                    raise Exception("Unmatched bracket")
+                a,b=code[4:-1].split(',')
+                if a not in self.valdict or b not in self.valdict:
+                    raise Exception("Variable not found")
+                self.bf+=self.movptr(self.valdict[b])+getstr(self.valdict[a])
 
     def join_semantically(self, strings):
         res = strings[0]

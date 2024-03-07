@@ -115,6 +115,12 @@ endmacro
 $<name> # Using a macro with no arguments
 $<name>(<arg1>,<arg2>,...) # Using a macro with arguments
 ```
+
+Memory:
+```text
+ptr(a,b) # Store address of a to variable b
+```
+
 ### Platform
 BFFuck is in **pure Python** and therefore it supports any platform.
 
