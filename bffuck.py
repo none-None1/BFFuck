@@ -23,12 +23,12 @@ expanders = {
 
 
 def _power_series(k, m):
-    x=int(k)
+    x = int(k)
     if not k:
-        return ''
-    if not x and len(k)<2:
         return ""
-    if len(k)<2:
+    if not x and len(k) < 2:
+        return ""
+    if len(k) < 2:
         return "+" * x
     top, rest = k[0], k[1:]
     return "+" * int(top) + multipliers[m] + _power_series(rest, 1 - m)
@@ -737,15 +737,174 @@ class BFFuck(object):
                     if ord(i) > 255:
                         raise Exception("print() only supports ASCII")
                     else:
-                        self.bf += getstr(ord(i))+'.'+'[-]'
+                        self.bf += getstr(ord(i)) + "." + "[-]"
                 self.bf += self.movptr(tmppos)
             elif code.startswith("ptr("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
-                a,b=code[4:-1].split(',')
+                a, b = code[4:-1].split(",")
                 if a not in self.valdict or b not in self.valdict:
                     raise Exception("Variable not found")
-                self.bf+=self.movptr(self.valdict[b])+getstr(self.valdict[a])
+                self.bf += self.movptr(self.valdict[b]) + getstr(self.valdict[a])
+            elif code.startswith("bf "):
+                self.bf += code[4:-1]
+            elif code.startswith("ref("):
+                if not (code.endswith(")")):
+                    raise Exception("Unmatched bracket")
+                a, b = code[4:-1].split(",")
+                if a not in self.valdict:
+                    raise Exception("Variable not found")
+                if b.isdigit():
+                    b = int(b)
+                    self.bf += (
+                        self.movptr(0)
+                        + "[-]"
+                        + self.movptr(b)
+                        + "["
+                        + self.movptr(0)
+                        + "+"
+                        + self.movptr(1)
+                        + "+"
+                        + self.movptr(b)
+                        + "-]"
+                        + self.movptr(self.valdict[a])
+                        + "[-]"
+                        + self.movptr(0)
+                        + "["
+                        + self.movptr(self.valdict[a])
+                        + "+"
+                        + self.movptr(0)
+                        + "-"
+                        + "]"
+                        + self.movptr(1)
+                        + "["
+                        + self.movptr(b)
+                        + "+"
+                        + self.movptr(1)
+                        + "-]"
+                    )
+                else:
+                    if b not in self.valdict:
+                        raise Exception("Variable not found")
+                    else:
+                        self.bf += (
+                            self.movptr(self.valdict[a])
+                            + "[-]"
+                            + self.movptr(self.playfield - 4)
+                            + "[-]"
+                            + self.movptr(self.valdict[b])
+                            + "["
+                            + self.movptr(self.playfield - 2)
+                            + "+"
+                            + self.movptr(self.playfield - 8)
+                            + "+"
+                            + self.movptr(self.valdict[b])
+                            + "-]"
+                            + self.movptr(self.playfield - 5)
+                            + "[-]++"
+                            + self.movptr(self.playfield - 1)
+                            + "[-]+"
+                            + self.movptr(self.playfield - 2)
+                            + "-" * (self.playfield - 2)
+                            + "["
+                            + self.movptr(self.playfield - 1)
+                            + "-[+>>-]>>[-]+<<--[++<<--]++>>>>"
+                            + self.movptr(self.playfield - 2)
+                            + "--]"
+                            + self.movptr(self.playfield - 1)
+                            + "-[+>>-]+<[>--[++<<--]++<+>>>>>-[+>>-]+<-]>--[++<<--]++>>>>"
+                            + self.movptr(self.playfield - 8)
+                            + "["
+                            + self.movptr(self.valdict[b])
+                            + "+"
+                            + self.movptr(self.playfield - 8)
+                            + "-]"
+                            + self.movptr(self.playfield - 6)
+                            + "["
+                            + self.movptr(self.valdict[a])
+                            + "+"
+                            + self.movptr(self.playfield - 1)
+                            + "-[+>>-]+<+>--[++<<--]++>>>>"
+                            + self.movptr(self.playfield - 6)
+                            + "-]"
+                        )
+            elif code.startswith("set("):
+                if not (code.endswith(")")):
+                    raise Exception("Unmatched bracket")
+                a, b = code[4:-1].split(",")
+                if not a.isdigit():
+                    if a not in self.valdict:
+                        raise Exception("Variable not found")
+                    else:
+                        self.bf += (
+                            self.movptr(self.playfield - 11)
+                            + "[-]"
+                            + self.movptr(self.playfield - 10)
+                            + "[-]"
+                            + self.movptr(self.valdict[a])
+                            + "["
+                            + self.movptr(self.playfield - 11)
+                            + "+"
+                            + self.movptr(self.playfield - 10)
+                            + "+"
+                            + self.movptr(self.valdict[a])
+                            + "-]"
+                            + self.movptr(self.playfield - 11)
+                            + "["
+                            + self.movptr(self.valdict[a])
+                            + "+"
+                            + self.movptr(self.playfield - 11)
+                            + "-]"
+                        )
+                else:
+                    self.bf += self.movptr(self.playfield - 10) + "[-]" + getstr(int(a))
+                if b.isdigit():
+                    b = int(b)
+                    self.bf += (
+                        self.movptr(b)
+                        + "[-]"
+                        + self.movptr(self.playfield - 10)
+                        + "["
+                        + self.movptr(b)
+                        + "+"
+                        + self.movptr(self.playfield - 10)
+                        + "-]"
+                    )
+                else:
+                    if b not in self.valdict:
+                        raise Exception("Variable not found")
+                    else:
+                        self.bf += (
+                            self.movptr(self.playfield - 4)
+                            + "[-]"
+                            + self.movptr(self.valdict[b])
+                            + "["
+                            + self.movptr(self.playfield - 2)
+                            + "+"
+                            + self.movptr(self.playfield - 8)
+                            + "+"
+                            + self.movptr(self.valdict[b])
+                            + "-]"
+                            + self.movptr(self.playfield - 5)
+                            + "[-]++"
+                            + self.movptr(self.playfield - 1)
+                            + "[-]+"
+                            + self.movptr(self.playfield - 2)
+                            + "-" * (self.playfield - 2)
+                            + "["
+                            + self.movptr(self.playfield - 1)
+                            + "-[+>>-]>>[-]+<<--[++<<--]++>>>>"
+                            + self.movptr(self.playfield - 2)
+                            + "--]"
+                            + self.movptr(self.playfield - 1)
+                            + "-[+>>-]+<[-]>--[++<<--]++<<<<<[>>>>>>>>>-[+>>-]+<+>--[++<<--]++<<<<<-]>>>>>>>>>"
+                            + self.movptr(self.playfield - 8)
+                            + "["
+                            + self.movptr(self.valdict[b])
+                            + "+"
+                            + self.movptr(self.playfield - 8)
+                            + "-]"
+                        )
 
     def join_semantically(self, strings):
         res = strings[0]
@@ -885,8 +1044,8 @@ class BFFuck(object):
         for i in prog.split("\n"):
             if len(i.strip()) == 0:
                 continue
-            if i.strip().startswith("print("):
-                clean = i.strip()  # Print needs to preserve whitespaces
+            if i.strip().startswith("print(") or i.strip().startswith("bf "):
+                clean = i.strip()  # Print and bf need to preserve whitespaces
             else:
                 clean = self.join_semantically(i.split()).split("#")[0]
             self.program(clean)

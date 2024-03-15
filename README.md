@@ -119,6 +119,8 @@ $<name>(<arg1>,<arg2>,...) # Using a macro with arguments
 Memory:
 ```text
 ptr(a,b) # Store address of a to variable b
+ref(a,b) # Store value of address b to variable a
+set(a,b) # Set value of address b to a (variable or integer literal)
 ```
 
 ### Platform
