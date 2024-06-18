@@ -1,4 +1,4 @@
-import re
+import re, os
 
 multipliers = ["[>++++++++++<-]>", "[<++++++++++>-]<"]
 expanders = {
@@ -108,8 +108,17 @@ class BFFuck(object):
                     + "-]"
                 )
             elif stmt.isdigit():
-                self.bf += "[-]"
-                self.bf += "+" * int(stmt)
+                self.bf += (
+                    "[-]"
+                    + self.movptr(0)
+                    + getstr(int(stmt))
+                    + "["
+                    + self.movptr(self.valdict[val])
+                    + "+"
+                    + self.movptr(0)
+                    + "-"
+                    + "]"
+                )
             else:
                 if stmt in self.valdict:
                     self.bf += (
@@ -995,6 +1004,33 @@ class BFFuck(object):
                 no_macro.append(i)
         return (macros, "\n".join(no_macro))
 
+    def preprocess_libraries(self, prog):
+        flag = False
+        res = []
+        for i in prog.split("\n"):
+            i = i.strip()
+            if i and i[0] == "?":
+                try:
+                    with open(i[1:].strip(), "r") as f:
+                        c = f.read().split("\n")
+                    res += c
+                except FileNotFoundError:
+                    try:
+                        with open(
+                            os.path.join(
+                                os.path.dirname(__file__), "stdlib", i[1:].strip()
+                            ),
+                            "r",
+                        ) as f:
+                            c = f.read().split("\n")
+                        res += c
+                    except:
+                        raise FileNotFoundError(f"Library {i[1:].strip()} not found")
+                flag = True
+            else:
+                res.append(i)
+        return flag, "\n".join(res)
+
     def can_be_preprocessed(self, prog):
         macros, no_macro = self.getmacros(prog)
         for i in no_macro.split("\n"):
@@ -1029,7 +1065,6 @@ class BFFuck(object):
                                         t = re.sub("\\b" + re.escape(_i) + "\\b", _j, t)
                                     res.append(t)
                             break
-
             else:
                 res.append(i)
         return "\n".join(res)
@@ -1037,10 +1072,15 @@ class BFFuck(object):
     def compile(self, prog, byte=1):
         """Compiles BFFuck programs into brainfuck"""
         clean = ""
-        macros, no_macro = self.getmacros(prog)
+        flag, prog = self.preprocess_libraries(prog)
+        while flag:
+            flag, prog = self.preprocess_libraries(prog)
+        all_macros = {}
         while self.can_be_preprocessed(prog):
-            prog = self.preprocess(macros, no_macro)
-            _, no_macro = self.getmacros(prog)
+            macros, no_macro = self.getmacros(prog)
+            for i, j in macros.items():
+                all_macros[i] = j
+            prog = self.preprocess(all_macros, no_macro)
         for i in prog.split("\n"):
             if len(i.strip()) == 0:
                 continue
