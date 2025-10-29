@@ -15,18 +15,18 @@ def _cli():
         "-o",
         help="Output brainfuck file name, default is the standard output",
     )
-    ap.add_argument("--byte", "-b", help="Use multi-byte integers (1 or 2 or 3 bytes)")
+    ap.add_argument("--byte", "-b", help="Use multi-byte integers (1 or 2 or 4 bytes)")
     a = ap.parse_args()
     program = a.program
     with open(program, "r") as f:
         code = f.read()
-    playfield = 15
+    playfield,byte = 15,1
     if a.playfield:
         playfield = int(a.playfield)
     if a.byte:
         byte = int(a.byte)
     try:
-        bf = BFFuck(playfield).compile(code, byte=int(a.byte))
+        bf = BFFuck(playfield).compile(code, byte=byte)
     except Exception as err:
         print("Compilation error: %s" % str(err))
         sys.exit(1)
@@ -39,4 +39,3 @@ def _cli():
 
 if __name__ == "__main__":
     _cli()
-    
