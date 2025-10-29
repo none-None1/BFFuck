@@ -1,0 +1,9 @@
+# Memory allocator, $alloc() allocates x "bytes" of memory and stores the pointer to the first "byte" in p, $free() does nothing
+mem=0
+sub(mem,1)
+macro $alloc(x,p)
+sub(mem,x)
+p=mem
+endmacro
+macro $free(p)
+endmacro

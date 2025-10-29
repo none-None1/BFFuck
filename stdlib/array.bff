@@ -1,0 +1,15 @@
+# Arrays
+# Use $alloc() in alloc.bff to allocate an array, $ssget() to get subscript b of array a and store it in r, $ssset() to set subscript b of array a to r
+?alloc.bff
+macro $ssget(a,b,r)
+c=0
+add(c,a)
+add(c,b)
+ref(r,c)
+endmacro
+macro $ssset(a,b,r)
+c=0
+add(c,a)
+add(c,b)
+set(r,c)
+endmacro
