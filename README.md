@@ -21,6 +21,10 @@ Comment:
 ```
 # Comment
 ```
+Raw brainfuck code injection:
+```
+bf "BF code" # Raw BF code injection
+```
 Variable definition:
 ```text
 <variable 1>=<variable 2>
