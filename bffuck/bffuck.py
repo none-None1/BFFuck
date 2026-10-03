@@ -1033,6 +1033,8 @@ class BFFuck(object):
 
     def can_be_preprocessed(self, prog):
         macros, no_macro = self.getmacros(prog)
+        if macros:
+            return True
         for i in no_macro.split("\n"):
             if i.startswith("$"):
                 return True
