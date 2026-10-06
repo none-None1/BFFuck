@@ -2,9 +2,9 @@ from setuptools import *
 
 setup(
     name="bffuck",
-    version="3.0.3",
+    version="3.1.0",
     url="https://github.com/none-None1/BFFuck",
-    packages=["bffuck"],
+    packages=find_packages(),
     description="Makes Brainfucking Easier!",
     long_description=open("README.md").read(),
     entry_points={"console_scripts": ["bffuck=bffuck:_cli"]},
@@ -14,4 +14,5 @@ setup(
         "Topic :: Software Development :: Code Generators",
     ],
     long_description_content_type="text/markdown",
+    include_package_data=True
 )

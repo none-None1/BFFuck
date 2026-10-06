@@ -80,7 +80,45 @@ class BFFuck(object):
 
     def program(self, code):
         """Compile one line of strict BFFuck program"""
-        if "=" in code:
+        if "<-" in code:
+            v = code.split("<-")
+            if len(v) > 2:
+                raise Exception("BFFuck currently does not support multiple <-'s")
+            val, stmt = v[0], v[1]
+            if val not in self.valdict or stmt not in self.valdict or val == stmt:
+                raise Exception(
+                    "Move instruction can only move between distinct variables"
+                )
+            self.bf += (
+                self.movptr(self.valdict[val])
+                + "[-]"
+                + self.movptr(self.valdict[stmt])
+                + "["
+                + self.movptr(self.valdict[val])
+                + "+"
+                + self.movptr(self.valdict[stmt])
+                + "-]"
+            )
+        elif "->" in code:
+            v = code.split("->")
+            if len(v) > 2:
+                raise Exception("BFFuck currently does not support multiple ->'s")
+            val, stmt = v[1], v[0]
+            if val not in self.valdict or stmt not in self.valdict or val == stmt:
+                raise Exception(
+                    "Move instruction can only move between distinct variables"
+                )
+            self.bf += (
+                self.movptr(self.valdict[val])
+                + "[-]"
+                + self.movptr(self.valdict[stmt])
+                + "["
+                + self.movptr(self.valdict[val])
+                + "+"
+                + self.movptr(self.valdict[stmt])
+                + "-]"
+            )
+        elif "=" in code:
             v = code.split("=")
             if len(v) > 2:
                 raise Exception("BFFuck currently does not support multiple ='s")

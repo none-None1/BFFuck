@@ -32,6 +32,17 @@ or
 <variable>=<number>
 ```
 
+Move instruction:
+```text
+a->b
+b<-a
+# These two do the same thing:
+# They move the value of a to b (overwriting b's value, and make a 0)
+# The same as a=b<LF>b=0, but does point-to-point movement between *existing variables*
+# so it's both shorter and faster
+```
+
+
 Addition:
 ```text
 add(x,<number>)
