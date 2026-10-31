@@ -1,27 +1,17 @@
 # Not very decent pseudo random number generator
 # $seed() sets seed, $rnd() stores a random number in x
-?env.bff
 x=1
-mod=0
 seed=42
-eq(x,bytes)
-if(x)
-md=83
-else
-x=2
-eq(x,bytes)
-if(x)
-md=21841
-else
-md=1431655751
-endif
-endif
 macro $seed(x)
 seed=x
 endmacro
 macro $rnd(x)
-mul(seed,3)
-mod(seed,md)
+mul(seed,5)
 add(seed,1)
 x=seed
 endmacro
+x=0
+while(1)
+$rnd(x)
+outc(x)
+endwhile

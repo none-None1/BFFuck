@@ -2,7 +2,7 @@ from setuptools import *
 
 setup(
     name="bffuck",
-    version="3.1.0",
+    version="3.1.1",
     url="https://github.com/none-None1/BFFuck",
     packages=find_packages(),
     description="Makes Brainfucking Easier!",

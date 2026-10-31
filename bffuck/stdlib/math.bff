@@ -1,0 +1,29 @@
+# Math library
+# $pow(x,y): Makes x x**y
+# $sqrt(x): Makes x floor(sqrt(x))
+macro $pow(x,y)
+__z=y
+__t=1
+while(__z)
+mul(__t,x)
+sub(__z,1)
+endwhile
+__t->x
+endmacro
+macro $sqrt(x)
+__t=0
+__f=1
+__g=0
+while(__f)
+add(__t,1)
+__u=x
+div(__u,__t)
+__u->__f
+lt(__f,__t)
+__f->__g
+__f=1
+sub(__f,__g)
+endwhile
+sub(__t,1)
+__t->x
+endmacro

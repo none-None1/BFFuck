@@ -715,6 +715,75 @@ class BFFuck(object):
                             self.bf += self.movptr(b) + "[-]"
                     else:
                         raise Exception("Variable not found")
+            elif code.startswith("div("):
+                expr = code[4:-1]
+                w = expr.split(",")
+                if len(w) != 2:
+                    raise Exception("div() needs 2 arguments")
+                else:
+                    a, b = w[0], w[1]
+                    if a in self.valdict:
+                        self.bf += (
+                            self.movptr(self.valdict[a])
+                            + "["
+                            + self.movptr(1)
+                            + "+"
+                            + self.movptr(self.valdict[a])
+                            + "-]"
+                        )
+                        if b.isdigit():
+                            self.bf += self.movptr(2) + "[-]+" * int(b)
+                            post = False
+                        else:
+                            if b in self.valdict:
+                                self.bf += (
+                                    self.movptr(2)
+                                    + "[-]"
+                                    + self.movptr(self.valdict[b])
+                                    + "["
+                                    + self.movptr(2)
+                                    + "+"
+                                    + self.movptr(self.playfield - 1)
+                                    + "+"
+                                    + self.movptr(self.valdict[b])
+                                    + "-]"
+                                )
+                                post = True
+                            else:
+                                raise Exception("Variable not found")
+                        self.bf += (
+                            self.movptr(3)
+                            + "[-]+"
+                            + self.movptr(4)
+                            + "[-]"
+                            + self.movptr(5)
+                            + "[-]"
+                            + self.movptr(6)
+                            + "[-]"
+                            + self.movptr(1)
+                            + "[->-[>+>>]>[[-<+>]+>+>>]<<<<<]"
+                            + self.movptr(2)
+                            + "[-]"
+                            + self.movptr(3)
+                            + "[-]"
+                            + self.movptr(4)
+                            + "["
+                            + self.movptr(self.valdict[a])
+                            + "+"
+                            + self.movptr(4)
+                            + "-]"
+                        )  # https://esolangs.org/wiki/Brainfuck_algorithms#Fixed_Version
+                        if post:
+                            self.bf += (
+                                self.movptr(self.playfield - 1)
+                                + "["
+                                + self.movptr(self.valdict[b])
+                                + "+"
+                                + self.movptr(self.playfield - 1)
+                                + "-]"
+                            )
+                    else:
+                        raise Exception("Variable not found")
             elif code.startswith("mod("):
                 expr = code[4:-1]
                 w = expr.split(",")
@@ -732,12 +801,14 @@ class BFFuck(object):
                             + "-]"
                         )
                         if b.isdigit():
-                            self.bf += self.movptr(3) + "+" * int(b)
+                            self.bf += self.movptr(3) + "[-]+" * int(b)
                             post = False
                         else:
                             if b in self.valdict:
                                 self.bf += (
-                                    self.movptr(self.valdict[b])
+                                    + self.movptr(3)
+                                    + '[-]'
+                                    + self.movptr(self.valdict[b])
                                     + "["
                                     + self.movptr(3)
                                     + "+"

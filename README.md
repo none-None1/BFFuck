@@ -64,6 +64,13 @@ or
 mul(x,<variable>)
 ```
 
+Floor division:
+```
+div(x,<number>)
+or
+div(x,<variable>)
+```
+
 Modulo:
 ```
 mod(x,<number>)
@@ -151,6 +158,7 @@ There are standard libraries for BFFuck, they are:
 * `alloc.bff` allocates memory
 * `array.bff` manages memory using arrays
 * `rng.bff` a not very decent random number generator
+* `math.bff` implements some math functions
 
 An example of the `rng.bff` library is here:
 ```text
