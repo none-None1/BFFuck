@@ -42,6 +42,11 @@ b<-a
 # so it's both shorter and faster
 ```
 
+Pointer-moving command:
+```text
+moveto(a) # Move pointer to the address of variable a
+# Useful with raw brainfuck code generation when interpreting in extensions of brainfuck 
+```
 
 Addition:
 ```text

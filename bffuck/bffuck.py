@@ -184,7 +184,16 @@ class BFFuck(object):
                 else:
                     raise Exception("Variable not found")
         else:
-            if code.startswith("while("):
+            if code.startswith("moveto("):
+                if not (code.endswith(")")):
+                    raise Exception("Unmatched bracket")
+                else:
+                    vn = code[7:-1]
+                    if vn not in self.valdict:
+                        raise Exception("Variable not found")
+                    else:
+                        self.bf += self.movptr(self.valdict[vn])
+            elif code.startswith("while("):
                 if not (code.endswith(")")):
                     raise Exception("Unmatched bracket")
                 else:
